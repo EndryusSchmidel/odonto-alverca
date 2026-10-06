@@ -129,6 +129,8 @@ html.has-reveal [data-reveal].is-in { opacity: 1; transform: none; }
 .testi-grid blockquote { margin: 16px 0 22px; font-family: var(--serif); font-size: 20px; line-height: 1.45; }
 .testi-grid figcaption { margin-top: auto; color: var(--muted); font-size: 13px; font-weight: 600; }
 
+.testi-more { margin: 34px 0 0; text-align: center; }
+
 /* Dúvidas */
 .faq { display: grid; grid-template-columns: .8fr 1.2fr; gap: 6vw; }
 .faq .section-head { margin: 0; }
