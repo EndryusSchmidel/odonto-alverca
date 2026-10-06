@@ -24,8 +24,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=3" />
-    <script src="script.js?v=1" defer></script>
+    <link rel="stylesheet" href="styles.css?v=4" />
+    <script src="script.js?v=2" defer></script>
   </head>
   <body>
     <div class="announcement">
@@ -41,6 +41,7 @@
       </a>
       <nav class="main-nav" id="main-nav" aria-label="Navegação principal">
         <a href="#sobre">A clínica</a>
+        <a href="#equipe">Equipe</a>
         <a href="#tratamentos">Especialidades</a>
         <a href="#primeira-consulta">Primeira consulta</a>
         <a href="#depoimentos">Pacientes</a>
@@ -96,6 +97,38 @@
             <li><strong>Atendimento humano</strong><span>Acolhimento em cada etapa</span></li>
           </ul>
         </div>
+      </section>
+
+      <section class="section team" id="equipe" aria-labelledby="team-title">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Equipe</p>
+          <h2 id="team-title">Quem cuida<br /><em>do seu sorriso.</em></h2>
+          <p class="section-lead">Escolha com quem prefere agendar. Na dúvida, a recepção indica o profissional mais adequado para o seu caso.</p>
+        </div>
+        <div class="team-grid">
+          <article class="team-card" data-reveal>
+            <span class="team-mono" aria-hidden="true">MA</span>
+            <h3>Dra. Milena Alverca</h3>
+            <p class="team-role">Responsável técnica · CRO-RJ 46-713</p>
+            <ul class="team-days">
+              <li><span>Segunda</span><b>9h às 18h</b></li>
+              <li><span>Quarta</span><b>14h às 18h30</b></li>
+              <li><span>Sábado</span><b>8h às 12h</b></li>
+            </ul>
+            <button type="button" class="treat-link" data-pro="milena">Agendar com a Dra. Milena <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="team-card" data-reveal style="--d: .06s">
+            <span class="team-mono" aria-hidden="true">DA</span>
+            <h3>Daniel C. Alverca</h3>
+            <p class="team-role">Equipe clínica</p>
+            <ul class="team-days">
+              <li><span>Segunda e terça</span><b>9h às 18h</b></li>
+              <li><span>Quinta</span><b>10h às 13h · 15h às 21h</b></li>
+            </ul>
+            <button type="button" class="treat-link" data-pro="daniel">Agendar com Daniel <span aria-hidden="true">→</span></button>
+          </article>
+        </div>
+        <p class="team-note" data-reveal>Horários de atendimento de cada profissional. A recepção confirma a disponibilidade do dia.</p>
       </section>
 
       <section class="section treatments" id="tratamentos" aria-labelledby="treat-title">
@@ -215,7 +248,7 @@
         <div class="booking-copy" data-reveal>
           <p class="eyebrow eyebrow-light">Agende em 30 segundos</p>
           <h2 id="booking-title">Agende sua<br /><em>avaliação.</em></h2>
-          <p>Escolha a especialidade e o melhor horário. Sua mensagem chega completa para a nossa recepção, que confirma o dia com você.</p>
+          <p>Escolha a especialidade, o profissional, o dia e o horário. Sua mensagem chega completa para a nossa recepção, que confirma o dia com você.</p>
           <ul class="booking-perks">
             <li>Especialistas em várias áreas</li>
             <li>Plano de tratamento explicado antes</li>
@@ -241,20 +274,22 @@
           </fieldset>
 
           <fieldset class="field">
-            <legend>Melhor dia</legend>
-            <div class="chips" data-group="day">
-              <button type="button" class="chip is-active" data-value="O quanto antes">O quanto antes</button>
-              <button type="button" class="chip" data-value="Durante a semana">Semana</button>
-              <button type="button" class="chip" data-value="No sábado">Sábado</button>
+            <legend>Profissional</legend>
+            <div class="chips" data-group="pro">
+              <button type="button" class="chip" data-value="milena">Dra. Milena</button>
+              <button type="button" class="chip" data-value="daniel">Daniel</button>
+              <button type="button" class="chip is-active" data-value="any">Sem preferência</button>
             </div>
           </fieldset>
 
           <fieldset class="field">
-            <legend>Período</legend>
-            <div class="chips" data-group="period">
-              <button type="button" class="chip" data-value="manhã">Manhã</button>
-              <button type="button" class="chip is-active" data-value="tarde">Tarde</button>
-            </div>
+            <legend>Dia</legend>
+            <div class="chips" data-group="date" id="date-chips"></div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend>Horário</legend>
+            <div class="chips" data-group="time" id="time-chips"></div>
           </fieldset>
 
           <label class="toggle">

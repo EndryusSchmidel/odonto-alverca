@@ -85,6 +85,20 @@ html.has-reveal [data-reveal].is-in { opacity: 1; transform: none; }
 .pains p { margin: 0; font-family: var(--serif); font-size: 20px; font-style: italic; color: #e6d9bf; }
 .pains strong { color: var(--champagne); font-size: 14px; letter-spacing: .06em; text-transform: uppercase; }
 
+/* Equipe */
+.section-lead { margin: 18px 0 0; color: var(--muted); }
+.team-grid { max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.team-card { padding: 30px; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); transition: transform .25s, box-shadow .25s; }
+.team-card:hover { transform: translateY(-4px); box-shadow: 0 22px 50px rgba(42, 32, 22, .1); }
+.team-mono { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; color: var(--white); background: linear-gradient(150deg, var(--champagne), var(--deep)); font-family: var(--serif); font-size: 20px; letter-spacing: .04em; }
+.team-card h3 { margin-top: 20px; font-size: 26px; line-height: 1.15; }
+.team-role { margin: 6px 0 0; color: var(--deep-2); font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+.team-days { margin: 22px 0 24px; padding: 0; list-style: none; }
+.team-days li { padding: 11px 0; display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.team-days span { color: var(--muted); }
+.team-days b { text-align: right; font-weight: 600; }
+.team-note { margin: 22px 0 0; color: var(--muted); font-size: 13px; }
+
 /* A clínica */
 .about { padding-bottom: 40px; display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 6vw; }
 .about-logo { padding: 20px; border-radius: var(--radius); background: var(--paper); border: 1px solid var(--line); }
@@ -232,8 +246,9 @@ html.has-reveal [data-reveal].is-in { opacity: 1; transform: none; }
   .hero-card { left: 14px; right: 14px; bottom: 14px; max-width: none; }
   .pains { padding: 26px 20px; gap: 6px 22px; }
   .pains p { font-size: 17px; }
-  .treat-grid, .testi-grid, .steps, .contact, .pillars { grid-template-columns: 1fr; }
+  .treat-grid, .testi-grid, .steps, .contact, .pillars, .team-grid { grid-template-columns: 1fr; }
   .treat-card { min-height: 0; padding: 26px; }
+  .team-card { padding: 26px; }
   .treat-card h3 { margin-top: 16px; }
   .booking-card { padding: 22px 18px; border-radius: 22px; }
   .contact-card { padding: 28px 22px; }

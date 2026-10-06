@@ -45,17 +45,77 @@ document.querySelector(`.hours [data-day="${todayRow}"]`)?.classList.add('today'
 document.querySelector('#year').textContent = new Date().getFullYear();
 
 // Agende sua avaliação
+// Horários de atendimento de cada profissional (agenda online da clínica, out/2026).
+// Dias: 0 = domingo ... 6 = sábado; faixas em horas [início, fim)
+const TEAM = {
+  milena: { label: 'Dra. Milena Alverca', days: { 1: [[9, 13], [14, 18]], 3: [[14, 18.5]], 6: [[8, 12]] } },
+  daniel: { label: 'Daniel C. Alverca', days: { 1: [[9, 13], [14, 18]], 2: [[9, 13], [14, 18]], 4: [[10, 13], [15, 21]] } },
+};
+const WEEK_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const WEEK_LONG = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+
 const form = document.querySelector('#booking-form');
 const preview = document.querySelector('#booking-preview');
 const nameInput = document.querySelector('#booking-name');
 const firstVisit = document.querySelector('#first-visit');
 const anxious = document.querySelector('#anxious');
-const state = { treatment: 'Clínico geral', day: 'O quanto antes', period: 'tarde' };
+const dateChips = document.querySelector('#date-chips');
+const timeChips = document.querySelector('#time-chips');
+const state = { treatment: 'Clínico geral', pro: 'any', date: null, time: null };
+
+const professionals = (pro) => (pro === 'any' ? Object.values(TEAM) : [TEAM[pro]]);
+const slotsFor = (pro, weekdayIndex) => {
+  const hours = new Set();
+  professionals(pro).forEach((p) => (p.days[weekdayIndex] || []).forEach(([from, to]) => {
+    for (let h = from; h < to; h += 1) hours.add(Math.floor(h));
+  }));
+  return [...hours].sort((x, y) => x - y);
+};
+
+// próximas datas em que o profissional atende (a partir de amanhã)
+const nextDates = (pro, amount = 6) => {
+  const found = [];
+  const cursor = new Date();
+  for (let i = 0; i < 60 && found.length < amount; i += 1) {
+    cursor.setDate(cursor.getDate() + 1);
+    const wd = cursor.getDay();
+    if (!slotsFor(pro, wd).length) continue;
+    const dd = String(cursor.getDate()).padStart(2, '0');
+    const mm = String(cursor.getMonth() + 1).padStart(2, '0');
+    found.push({ key: `${mm}-${dd}`, wd, short: `${WEEK_SHORT[wd]} ${dd}/${mm}`, long: `${WEEK_LONG[wd]}, ${dd}/${mm}` });
+  }
+  return found;
+};
+
+const makeChip = (value, label, active) => {
+  const chip = document.createElement('button');
+  chip.type = 'button';
+  chip.className = `chip${active ? ' is-active' : ''}`;
+  chip.dataset.value = value;
+  chip.textContent = label;
+  return chip;
+};
+
+const renderTimes = () => {
+  timeChips.replaceChildren();
+  const hours = state.date ? slotsFor(state.pro, state.date.wd) : [];
+  if (!hours.includes(state.time)) state.time = hours[0] ?? null;
+  hours.forEach((h) => timeChips.append(makeChip(h, `${h}h`, h === state.time)));
+};
+
+const renderDates = () => {
+  dateChips.replaceChildren();
+  const dates = nextDates(state.pro);
+  state.date = dates.find((d) => state.date && d.key === state.date.key) || dates[0] || null;
+  dates.forEach((d) => dateChips.append(makeChip(d.key, d.short, state.date && d.key === state.date.key)));
+  renderTimes();
+};
 
 const buildMessage = () => {
   const lines = [`Olá! Gostaria de agendar uma avaliação na ${CLINIC.name}.`];
   lines.push(state.treatment ? `Interesse: ${state.treatment}.` : 'Ainda não sei qual tratamento.');
-  lines.push(`Quando: ${state.day}, de ${state.period}.`);
+  lines.push(`Profissional: ${state.pro === 'any' ? 'sem preferência' : TEAM[state.pro].label}.`);
+  if (state.date) lines.push(`Quando: ${state.date.long}${state.time !== null ? `, às ${state.time}h` : ''}.`);
   if (firstVisit.checked) lines.push('É minha primeira consulta.');
   if (anxious.checked) lines.push('Tenho receio de dentista — prefiro um atendimento com calma.');
   const name = nameInput.value.trim();
@@ -67,12 +127,33 @@ const render = () => { preview.textContent = buildMessage(); };
 const selectChip = (chip) => {
   const group = chip.parentElement;
   group.querySelectorAll('.chip').forEach((c) => c.classList.toggle('is-active', c === chip));
-  state[group.dataset.group] = chip.dataset.value;
+  const key = group.dataset.group;
+  if (key === 'date') {
+    state.date = nextDates(state.pro).find((d) => d.key === chip.dataset.value);
+    renderTimes();
+  } else if (key === 'time') {
+    state.time = Number(chip.dataset.value);
+  } else {
+    state[key] = chip.dataset.value;
+    if (key === 'pro') renderDates();
+  }
   render();
 };
-form.querySelectorAll('.chip').forEach((chip) => chip.addEventListener('click', () => selectChip(chip)));
+form.addEventListener('click', (event) => {
+  const chip = event.target.closest('.chip');
+  if (chip && form.contains(chip)) selectChip(chip);
+});
 [firstVisit, anxious].forEach((el) => el.addEventListener('change', render));
 nameInput.addEventListener('input', render);
+
+// Cards da equipe já escolhem o profissional
+document.querySelectorAll('[data-pro]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const chip = form.querySelector(`[data-group="pro"] [data-value="${button.dataset.pro}"]`);
+    if (chip) selectChip(chip);
+    document.querySelector('#agendar').scrollIntoView({ behavior: 'smooth' });
+  });
+});
 
 // Cards de tratamento já preenchem o formulário
 document.querySelectorAll('[data-treatment]').forEach((button) => {
@@ -87,6 +168,7 @@ form.addEventListener('submit', (event) => {
   event.preventDefault();
   window.open(`https://api.whatsapp.com/send?phone=${CLINIC.whatsapp}&text=${encodeURIComponent(buildMessage())}`, '_blank', 'noopener');
 });
+renderDates();
 render();
 
 // Botão flutuante
